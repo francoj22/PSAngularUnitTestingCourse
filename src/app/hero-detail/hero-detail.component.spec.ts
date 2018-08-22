@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, flush, TestBed, tick} from '@angular/core/testing';
 import {HeroDetailComponent} from './hero-detail.component';
 import {ActivatedRoute} from '@angular/router';
 import {HeroService} from '../hero.service';
@@ -40,6 +40,26 @@ describe('HeroDetailComponent', () => {
   it('should render hero name in a h2 tag',() => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('h2').textContent).toContain('SUPERDUDE');
-  })
+  });
+
+  it('should call updateHero when save is called ', fakeAsync (() => {
+    mockHeroService.updateHero.and.returnValue(of({}));
+    fixture.detectChanges();
+
+    fixture.componentInstance.save();
+    //tick(250);
+    flush();
+    expect(mockHeroService.updateHero).toHaveBeenCalled();
+  }));
+
+  it('should call updateHero when saveNew is called ', async(() => {
+    mockHeroService.updateHero.and.returnValue(of({}));
+    fixture.detectChanges();
+
+    fixture.componentInstance.saveNew();
+    fixture.whenStable().then(() => {
+      expect(mockHeroService.updateHero).toHaveBeenCalled();
+    });
+  }));
 
 })
